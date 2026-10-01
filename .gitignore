@@ -1,0 +1,5 @@
+# Private chat data and keys -- never commit these
+data/
+*.zip
+.env
+__pycache__/
