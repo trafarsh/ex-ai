@@ -1,0 +1,5 @@
+{
+  "updated": "2026-10-04",
+  "note": "Trending sounds for edits. Add entries as {\"title\": \"...\", \"artist\": \"...\", \"bpm\": 128, \"tags\": [\"phonk\"]}. Every Edit Suite panel picks up changes within a few hours.",
+  "songs": []
+}

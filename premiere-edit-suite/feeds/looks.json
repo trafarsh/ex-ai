@@ -1,0 +1,16 @@
+{
+  "updated": "2026-10-04",
+  "note": "Lumetri Color values. Edit this file on GitHub and every Edit Suite panel picks it up within a few hours. 'Section/Name' targets a control inside a Lumetri section, e.g. 'Vignette/Amount'.",
+  "looks": [
+    { "id": "orange-teal", "name": "Orange & Teal", "tag": "trending", "lumetri": { "Temperature": 12, "Tint": -4, "Contrast": 25, "Highlights": -15, "Shadows": 10, "Saturation": 115, "Vibrance": 15 } },
+    { "id": "cold-night", "name": "Cold Night", "tag": "trending", "lumetri": { "Temperature": -30, "Tint": 5, "Exposure": -0.3, "Contrast": 30, "Highlights": -20, "Blacks": -15, "Saturation": 85 } },
+    { "id": "golden-hour", "name": "Golden Hour", "tag": "warm", "lumetri": { "Temperature": 35, "Tint": 6, "Exposure": 0.2, "Contrast": 15, "Highlights": -10, "Saturation": 120, "Vibrance": 20, "Faded Film": 10 } },
+    { "id": "dark-moody", "name": "Dark Moody", "tag": "trending", "lumetri": { "Exposure": -0.5, "Contrast": 35, "Highlights": -30, "Shadows": -20, "Blacks": -25, "Saturation": 80, "Vignette/Amount": -2 } },
+    { "id": "faded-film", "name": "Faded Film", "tag": "film", "lumetri": { "Temperature": 8, "Contrast": -10, "Blacks": 20, "Faded Film": 45, "Saturation": 90 } },
+    { "id": "hard-bw", "name": "Hard B&W", "tag": "mono", "lumetri": { "Contrast": 45, "Whites": 15, "Blacks": -25, "Saturation": 0, "Sharpen": 20 } },
+    { "id": "saturated-pop", "name": "Saturated Pop", "tag": "vivid", "lumetri": { "Contrast": 20, "Saturation": 145, "Vibrance": 30, "Sharpen": 15 } },
+    { "id": "anime-glow", "name": "Anime Glow", "tag": "anime", "lumetri": { "Temperature": -8, "Exposure": 0.3, "Contrast": 10, "Highlights": 20, "Shadows": 15, "Saturation": 125, "Vibrance": 25 } },
+    { "id": "gritty-edit", "name": "Gritty Edit", "tag": "trending", "lumetri": { "Temperature": -10, "Contrast": 40, "Highlights": -25, "Shadows": -10, "Saturation": 75, "Sharpen": 45, "Vignette/Amount": -1.5 } },
+    { "id": "red-phonk", "name": "Red Phonk", "tag": "phonk", "lumetri": { "Temperature": 20, "Tint": 25, "Contrast": 35, "Blacks": -20, "Saturation": 110, "Vignette/Amount": -2 } }
+  ]
+}

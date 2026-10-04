@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Edit Suite</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav class="tabs" role="tablist">
+    <button data-tab="setup" class="on">Setup</button>
+    <button data-tab="beats">Beats</button>
+    <button data-tab="cut">Cut</button>
+    <button data-tab="fx">Effects</button>
+    <button data-tab="text">Text</button>
+    <button data-tab="color">Color</button>
+    <button data-tab="packs">Scenepacks</button>
+    <button data-tab="export">Export</button>
+  </nav>
+  <p id="seqLine" class="muted small seqline">No sequence open.</p>
+
+  <main>
+    <!-- ======================================================= SETUP -->
+    <section class="tab on" id="tab-setup">
+      <div class="block">
+        <h3>9:16 for TikTok</h3>
+        <button id="su-vertical" class="primary wide">Make this sequence 1080 × 1920</button>
+        <button id="su-newSeq" class="wide">New 9:16 sequence from clips selected in Project panel</button>
+        <div class="row">
+          <button id="su-fill" class="grow">Fill frame (crop)</button>
+          <button id="su-fit" class="grow">Fit frame (bars)</button>
+          <label class="inline"><input id="su-selOnly" type="checkbox"> selected only</label>
+        </div>
+        <p class="muted small">Fill scales every clip so it covers the vertical frame. Keyframed scale is left alone.</p>
+      </div>
+      <div class="block">
+        <h3>Workflow</h3>
+        <ol class="muted small steps">
+          <li>Setup: make the sequence 9:16 and fill the frame.</li>
+          <li>Beats: enter the song's BPM, put the playhead on the first beat, create beat markers.</li>
+          <li>Cut: cut your clips on the beats, or lay selected clips one per beat.</li>
+          <li>Effects, Text, Color: everything lands on the beat markers.</li>
+          <li>Export: render each clip on V1 as its own file.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ======================================================= BEATS -->
+    <section class="tab" id="tab-beats">
+      <div class="block">
+        <h3>Beat markers from BPM</h3>
+        <div class="grid2">
+          <label>BPM<input id="bt-bpm" type="number" min="30" max="300" step="0.1" placeholder="e.g. 128"></label>
+          <label>Marker every
+            <select id="bt-every">
+              <option value="0.5">½ beat</option>
+              <option value="1" selected>beat</option>
+              <option value="2">2 beats</option>
+              <option value="4">bar (4 beats)</option>
+            </select>
+          </label>
+          <label>First beat at (sec)<input id="bt-first" type="number" min="0" step="0.001" value="0"></label>
+          <label>&nbsp;<button id="bt-playhead">Use playhead</button></label>
+        </div>
+        <label class="inline"><input id="bt-replace" type="checkbox" checked> Replace existing beat markers</label>
+        <div class="row">
+          <button id="bt-create" class="primary grow">Create beat markers</button>
+          <button id="bt-clear">Clear</button>
+        </div>
+        <p class="muted small">Markers are named “Beat 1, Beat 2…”, every bar's first beat is red. Your own markers are never touched.</p>
+      </div>
+      <div class="block">
+        <h3>Don't know the BPM?</h3>
+        <button id="bt-tap" class="wide tap">Tap here on every beat (or press T)</button>
+        <p class="muted small">Tapped: <span id="bt-tapBpm">–</span> BPM · play the song and tap at least 8 times.</p>
+      </div>
+      <div class="block">
+        <div class="row tight"><h3 class="grow">Trending sounds</h3><span id="bt-feedInfo" class="muted small"></span></div>
+        <input id="bt-search" type="text" placeholder="Search songs…">
+        <ul id="bt-songs" class="list"></ul>
+        <details>
+          <summary>My songs</summary>
+          <div class="row"><input id="bt-myTitle" type="text" placeholder="Song name"><input id="bt-myBpm" type="number" class="narrow" placeholder="BPM"><button id="bt-myAdd">Add</button></div>
+        </details>
+      </div>
+    </section>
+
+    <!-- ======================================================= CUT -->
+    <section class="tab" id="tab-cut">
+      <div class="block">
+        <h3>Cut clips on the beat</h3>
+        <div class="grid2">
+          <label>Track<select id="ct-track" class="vtracks"></select></label>
+          <label>Cut every<select id="ct-every"><option value="1">beat</option><option value="2">2 beats</option><option value="4">bar</option></select></label>
+        </div>
+        <label class="inline"><input id="ct-audio" type="checkbox"> also cut the audio track with the same number</label>
+        <button id="ct-cut" class="primary wide">Razor at beat markers</button>
+        <p class="muted small">Splits every clip on the track at each beat it spans. Ctrl/Cmd+Z undoes.</p>
+      </div>
+      <div class="block">
+        <h3>Beat montage</h3>
+        <p class="muted small">Select clips in the Project panel, put the playhead where the montage starts. One clip per beat(s), in the order you selected them.</p>
+        <div class="grid2">
+          <label>Video track<select id="mt-track" class="vtracks"></select></label>
+          <label>Clip sound on<select id="mt-audio" class="atracks"></select></label>
+          <label>Beats per clip<input id="mt-per" type="number" min="1" max="16" value="1"></label>
+        </div>
+        <button id="mt-run" class="primary wide">Lay selected clips on the beats</button>
+        <p class="muted small">Keep your music on A1; the clips' own sound goes on the track you pick, which must be empty there.</p>
+      </div>
+    </section>
+
+    <!-- ======================================================= EFFECTS -->
+    <section class="tab" id="tab-fx">
+      <div class="block">
+        <h3>Effects on the beat</h3>
+        <div class="cards" id="fx-cards">
+          <button data-fx="zoom" class="card on"><b>Zoom punch</b><span>scale hit + ease out</span></button>
+          <button data-fx="shake" class="card"><b>Shake</b><span>camera shake</span></button>
+          <button data-fx="flash" class="card"><b>Flash</b><span>white exposure flash</span></button>
+          <button data-fx="glitch" class="card"><b>Glitch / RGB</b><span>jitter, skew, RGB split</span></button>
+          <button data-fx="flicker" class="card"><b>CC flicker</b><span>color flick per beat</span></button>
+          <button data-fx="velocity" class="card"><b>Velocity punch</b><span>speed-ramp look</span></button>
+        </div>
+        <div class="grid2">
+          <label>Intensity %<input id="fx-intensity" type="number" min="1" max="200" value="20"></label>
+          <label>Strength<input id="fx-strength" type="number" min="1" max="300" value="40"></label>
+          <label>Length (frames)<input id="fx-frames" type="number" min="1" max="60" value="6"></label>
+          <label>On every<select id="fx-every"><option value="1">beat</option><option value="2">2nd beat</option><option value="4">bar</option></select></label>
+          <label>Apply to<select id="fx-target"><option value="selected">selected clips</option><option value="track">all clips on track →</option></select></label>
+          <label>Track<select id="fx-track" class="vtracks"></select></label>
+        </div>
+        <label class="inline"><input id="fx-blur" type="checkbox" checked> Motion blur (adds Transform effect)</label>
+        <button id="fx-apply" class="primary wide">Apply on beats</button>
+        <p id="fx-help" class="muted small"></p>
+      </div>
+      <div class="block note">
+        <b>About real speed ramps:</b> Premiere does not let any extension change clip speed or time-remap keyframes, so a true velocity edit still needs Time Remapping by hand (right-click clip → Show Clip Keyframes → Time Remapping → Speed). “Velocity punch” gives the look on the beat: a scale rush with motion and directional blur.
+      </div>
+    </section>
+
+    <!-- ======================================================= TEXT -->
+    <section class="tab" id="tab-text">
+      <div class="block">
+        <h3>Text</h3>
+        <label>Title template</label>
+        <div class="row"><select id="tx-template"><option value="">Loading templates…</option></select><button id="tx-browse">Browse</button></div>
+        <label>Text</label>
+        <textarea id="tx-text" rows="3" placeholder="Type a quote or lyrics…"></textarea>
+        <div class="grid2">
+          <label>Show<select id="tx-mode"><option value="words">word by word on beats</option><option value="lines">line by line on beats</option><option value="whole">all at playhead</option></select></label>
+          <label>Beats per word/line<input id="tx-per" type="number" min="1" max="16" value="1"></label>
+          <label>Animation<select id="tx-anim">
+            <option value="pop">Pop-in / bounce</option>
+            <option value="3d">3D flip</option>
+            <option value="shake">Shake</option>
+            <option value="glitch">Glitch</option>
+            <option value="fade">Fade</option>
+            <option value="slide">Slide up</option>
+            <option value="">None</option>
+          </select></label>
+          <label>Track<select id="tx-track" class="vtracks"></select></label>
+          <label>Seconds (all at playhead)<input id="tx-seconds" type="number" min="0.2" step="0.1" value="2"></label>
+          <label>&nbsp;<span class="inline"><input id="tx-upper" type="checkbox" checked> CAPS</span></label>
+        </div>
+        <button id="tx-add" class="primary wide">Add text</button>
+        <button id="tx-animate" class="wide">Animate selected clips with this animation</button>
+        <p class="muted small">Words start at the playhead's next beat. Put text on V2 or higher, above your footage.</p>
+      </div>
+    </section>
+
+    <!-- ======================================================= COLOR -->
+    <section class="tab" id="tab-color">
+      <div class="block">
+        <div class="row tight"><h3 class="grow">CC looks</h3><button id="cc-refresh" class="link">Check for new looks</button></div>
+        <p id="cc-feedInfo" class="muted small"></p>
+        <div id="cc-looks" class="cards looks"></div>
+        <div class="grid2">
+          <label>Intensity <span id="cc-intLabel">100%</span><input id="cc-intensity" type="range" min="0" max="150" value="100"></label>
+          <label>Apply to<select id="cc-target"><option value="selected">selected clips</option><option value="track">all clips on track →</option></select></label>
+          <label>Track<select id="cc-track" class="vtracks"></select></label>
+        </div>
+        <button id="cc-apply" class="primary wide" disabled>Apply look</button>
+        <p class="muted small">Tip: select one adjustment layer over the whole edit to grade everything at once. Applying another look replaces the previous one on that clip.</p>
+      </div>
+      <div class="block">
+        <h3>CC flicker on the beat</h3>
+        <p class="muted small">Exposure/contrast/saturation flick with warm-cold alternation on each beat marker.</p>
+        <button id="cc-flicker" class="wide">Apply CC flicker to selected clips</button>
+      </div>
+    </section>
+
+    <!-- ======================================================= SCENEPACKS -->
+    <section class="tab" id="tab-packs">
+      <div class="block">
+        <h3>Find scenepacks</h3>
+        <div class="row"><input id="sp-query" type="text" placeholder="Character, movie or show…"><button id="sp-search" class="primary">Search</button></div>
+        <div class="row"><select id="sp-site"></select><button id="sp-home">Open site</button></div>
+        <p class="muted small">Opens in your browser. Press the site's Download button; with auto-import on, the clips land in Premiere by themselves.</p>
+      </div>
+      <div class="block">
+        <h3>Auto-import downloads</h3>
+        <label class="inline switch"><input id="sp-auto" type="checkbox"> Watch my Downloads folder</label>
+        <div class="row"><input id="sp-dir" type="text"><button id="sp-dirPick">Change</button></div>
+        <p class="muted small">New .mp4/.mov files and .zip packs are unzipped and imported into the bin <b>Scenepacks › pack name</b>.</p>
+      </div>
+      <div class="block">
+        <h3>Download from a link</h3>
+        <div class="row"><input id="sp-url" type="text" placeholder="Paste a direct, Google Drive or Dropbox link"><button id="sp-get" class="primary">Download</button></div>
+        <progress id="sp-progress" value="0" max="1"></progress>
+        <p class="muted small">MEGA and web pages that are not a file can't be fetched here; download those in the browser and auto-import takes over.</p>
+      </div>
+      <p class="muted small fine">Scenepacks are clips from films and shows owned by their studios. Use them for fan edits, and check the site's terms before posting anything commercial.</p>
+    </section>
+
+    <!-- ======================================================= EXPORT -->
+    <section class="tab" id="tab-export">
+      <div class="block">
+        <div class="row">
+          <label for="track">Cuts from track</label>
+          <select id="track"><option value="0">V1</option></select>
+          <button id="scan" class="primary">Read timeline</button>
+        </div>
+        <p id="seqInfo" class="muted small">Exports every clip on V1 as its own video.</p>
+      </div>
+      <div class="block grow">
+        <div class="row tight">
+          <strong id="shotCount">0 shots</strong>
+          <span class="spacer"></span>
+          <button id="selAll" class="link">All</button>
+          <button id="selNone" class="link">None</button>
+          <button id="selTimeline" class="link">Timeline selection</button>
+        </div>
+        <div class="tableWrap">
+          <table id="shots">
+            <thead><tr><th></th><th>#</th><th>In</th><th>Out</th><th>Frames</th><th>Clip</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="block">
+        <label for="folder">Output folder</label>
+        <div class="row"><input id="folder" type="text" placeholder="Choose a folder…"><button id="pickFolder">Browse</button></div>
+        <label for="preset">Export preset</label>
+        <div class="row"><select id="preset"><option value="">Loading presets…</option></select><button id="pickPreset">Browse</button></div>
+        <label for="pattern">File name</label>
+        <input id="pattern" type="text" value="{seq}_shot_{n}">
+        <p class="muted small">Tokens: {n} {seq} {clip} {in}. Preview: <span id="preview"></span></p>
+        <div class="row">
+          <label class="inline"><input type="radio" name="mode" value="ame" checked> Queue in Media Encoder</label>
+          <label class="inline"><input type="radio" name="mode" value="direct"> Render in Premiere</label>
+        </div>
+        <div class="row">
+          <label class="inline"><input id="startBatch" type="checkbox" checked> Start AME queue</label>
+          <label class="inline"><input id="overwrite" type="checkbox"> Overwrite</label>
+        </div>
+        <details>
+          <summary>Advanced</summary>
+          <div class="row"><label for="outAdjust" class="inline">Out-point adjust (frames)</label><input id="outAdjust" type="number" value="0" step="1" class="narrow"></div>
+          <label class="inline"><input id="skipDisabled" type="checkbox" checked> Skip disabled clips</label>
+        </details>
+        <button id="export" class="primary wide" disabled>Export shots</button>
+        <progress id="progress" value="0" max="1"></progress>
+      </div>
+    </section>
+  </main>
+
+  <footer class="block logbox"><pre id="log"></pre></footer>
+
+  <script src="js/lib.js"></script>
+  <script src="js/nodeio.js"></script>
+  <script src="js/boot.js"></script>
+  <script src="js/suite.js"></script>
+  <script src="js/export.js"></script>
+</body>
+</html>

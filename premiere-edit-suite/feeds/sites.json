@@ -1,0 +1,11 @@
+{
+  "updated": "2026-10-04",
+  "note": "Scenepack sites for the Scenepacks tab. {q} is replaced by the search text. 'search' can be the site's own search URL; a Google site: search works for any site.",
+  "sites": [
+    { "name": "scenepacks.com", "home": "https://scenepacks.com/", "search": "https://www.google.com/search?q=site%3Ascenepacks.com+{q}" },
+    { "name": "SceneVault (talkiegen.me)", "home": "https://talkiegen.me/", "search": "https://www.google.com/search?q=site%3Atalkiegen.me+{q}" },
+    { "name": "veelscp.com", "home": "https://veelscp.com/", "search": "https://www.google.com/search?q=site%3Aveelscp.com+{q}" },
+    { "name": "suitstmscenepacks.com", "home": "https://suitstmscenepacks.com/", "search": "https://www.google.com/search?q=site%3Asuitstmscenepacks.com+{q}" },
+    { "name": "Any site (Google)", "home": "https://www.google.com/", "search": "https://www.google.com/search?q={q}+scenepack+4k" }
+  ]
+}
