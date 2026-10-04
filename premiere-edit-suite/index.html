@@ -14,6 +14,7 @@
     <button data-tab="text">Text</button>
     <button data-tab="color">Color</button>
     <button data-tab="packs">Scenepacks</button>
+    <button data-tab="make">Make pack</button>
     <button data-tab="export">Export</button>
   </nav>
   <p id="seqLine" class="muted small seqline">No sequence open.</p>
@@ -212,6 +213,88 @@
       <p class="muted small fine">Scenepacks are clips from films and shows owned by their studios. Use them for fan edits, and check the site's terms before posting anything commercial.</p>
     </section>
 
+
+    <!-- ======================================================= MAKE PACK -->
+    <section class="tab" id="tab-make">
+      <div class="block">
+        <h3>1 · Movie</h3>
+        <div class="row">
+          <button id="pk-fromProject" class="primary grow">Use movie selected in Project panel</button>
+          <button id="pk-fromSeq" class="grow">Use open sequence</button>
+        </div>
+        <p id="pk-movie" class="muted small">Import the movie or episode, select it in the Project panel, then click the button.</p>
+      </div>
+
+      <div class="block">
+        <h3>2 · Find shots</h3>
+        <div class="row">
+          <select id="pk-sens" class="grow"><option value="low">Low sensitivity</option><option value="medium" selected>Medium sensitivity</option><option value="high">High sensitivity</option></select>
+          <button id="pk-shots" class="primary">Find shots</button>
+        </div>
+        <p class="muted small">Premiere's Scene Edit Detection cuts V1 at every camera change. Skip this if the timeline is already cut.</p>
+      </div>
+
+      <div class="block">
+        <h3>3 · Find characters</h3>
+        <div class="row">
+          <select id="pk-perShot" class="grow"><option value="1">1 frame per shot (fast)</option><option value="2" selected>2 frames per shot</option><option value="3">3 frames per shot (thorough)</option></select>
+          <button id="pk-analyze" class="primary">Find characters</button>
+          <button id="pk-stop" disabled>Stop</button>
+        </div>
+        <progress id="pk-progress" value="0" max="1"></progress>
+        <p id="pk-status" class="muted small">Runs on this computer; nothing is uploaded. You can stop and continue later.</p>
+      </div>
+
+      <div class="block">
+        <div class="row tight"><h3 class="grow">4 · Characters</h3><span id="pk-count" class="muted small"></span></div>
+        <div class="grid2">
+          <label>Grouping <span id="pk-thrLabel"></span><input id="pk-thr" type="range" min="35" max="62" value="45"></label>
+          <label>Min. scenes per character<input id="pk-min" type="number" min="1" max="50" value="3"></label>
+        </div>
+        <div class="row">
+          <input id="pk-title" type="text" placeholder="Movie or show title (add year if needed)">
+          <button id="pk-cast">Get cast</button>
+        </div>
+        <details>
+          <summary>Paste cast list instead</summary>
+          <textarea id="pk-castText" rows="4" placeholder="Rick Dalton - Leonardo DiCaprio&#10;Cliff Booth - Brad Pitt"></textarea>
+          <button id="pk-castUse" class="wide">Use this cast</button>
+        </details>
+        <datalist id="pk-castList"></datalist>
+        <div class="row">
+          <button id="pk-suggest" class="grow" title="Most scenes = first-billed role. Check every name.">Suggest names</button>
+          <button id="pk-merge" class="grow">Merge ticked</button>
+          <button id="pk-hide" class="grow">Hide ticked</button>
+          <button id="pk-showAll" class="link">Show hidden</button>
+        </div>
+        <div id="pk-chars" class="chars"></div>
+        <p class="muted small">Name suggestions follow screen time and billing order, not faces. Check each one.</p>
+      </div>
+
+      <div class="block" id="pk-scenesBlock" hidden>
+        <div class="row tight">
+          <h3 class="grow" id="pk-scenesTitle"></h3>
+          <button id="pk-sAll" class="link">All</button><button id="pk-sNone" class="link">None</button><button id="pk-back" class="link">Close</button>
+        </div>
+        <div id="pk-scenes" class="scenes"></div>
+      </div>
+
+      <div class="block">
+        <h3>5 · Export scenes</h3>
+        <label>Output folder</label>
+        <div class="row"><input id="pk-folder" type="text" placeholder="Choose a folder…"><button id="pk-pickFolder">Browse</button></div>
+        <label>Export preset</label>
+        <select id="pk-preset"><option value="">Open this tab inside Premiere</option></select>
+        <label class="inline"><input id="pk-perChar" type="checkbox" checked> One folder per character</label>
+        <label class="inline"><input id="pk-ame" type="checkbox" checked> Queue in Media Encoder</label>
+        <div class="row">
+          <button id="pk-export" class="primary grow">Export selected scenes</button>
+          <button id="pk-name" title="Rename V1 clips after their characters">Name clips</button>
+        </div>
+        <progress id="pk-exportProgress" value="0" max="1"></progress>
+      </div>
+    </section>
+
     <!-- ======================================================= EXPORT -->
     <section class="tab" id="tab-export">
       <div class="block">
@@ -271,5 +354,8 @@
   <script src="js/boot.js"></script>
   <script src="js/suite.js"></script>
   <script src="js/export.js"></script>
+  <script src="js/packlib.js"></script>
+  <script src="js/faces.js"></script>
+  <script src="js/packmaker.js"></script>
 </body>
 </html>

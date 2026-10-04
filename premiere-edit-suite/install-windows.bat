@@ -13,6 +13,7 @@ xcopy "%SRC%css" "%DEST%\css\" /e /i /q /y >nul
 xcopy "%SRC%js" "%DEST%\js\" /e /i /q /y >nul
 xcopy "%SRC%jsx" "%DEST%\jsx\" /e /i /q /y >nul
 xcopy "%SRC%feeds" "%DEST%\feeds\" /e /i /q /y >nul
+xcopy "%SRC%vendor" "%DEST%\vendor\" /e /i /q /y >nul
 copy /y "%SRC%index.html" "%DEST%\" >nul
 
 echo Installed to: %DEST%

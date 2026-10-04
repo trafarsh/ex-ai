@@ -151,3 +151,19 @@ input[type=range] { width: 100%; accent-color: var(--accent); }
 .fine { margin: 0 2px; font-size: 10px; }
 .logbox { flex: 0 0 auto; padding: 6px 8px; }
 #log { max-height: 110px; }
+
+/* ---- make pack ---- */
+.chars { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 6px; margin-top: 6px; }
+.char { position: relative; border: 1px solid var(--border); border-radius: 4px; background: var(--field); padding: 5px; display: flex; flex-direction: column; gap: 4px; }
+.char.on { border-color: var(--accent); background: #22344a; }
+.char img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 3px; cursor: pointer; background: #111; }
+.char input[type=text] { width: 100%; padding: 3px 4px; font-size: 11px; }
+.char .meta a { color: var(--accent); text-decoration: none; }
+.char .meta { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--muted); }
+.char .pick { position: absolute; top: 9px; left: 9px; z-index: 1; transform: scale(1.25); accent-color: var(--accent); }
+.char .sugg { color: var(--warn); font-size: 10px; }
+.scenes { display: grid; grid-template-columns: repeat(auto-fill, minmax(124px, 1fr)); gap: 6px; max-height: 420px; overflow: auto; }
+.scene { border: 2px solid transparent; border-radius: 4px; background: var(--field); cursor: pointer; overflow: hidden; }
+.scene.on { border-color: var(--accent); }
+.scene img { display: block; width: 100%; aspect-ratio: 16/9; object-fit: cover; background: #111; }
+.scene span { display: block; padding: 2px 5px; font-size: 10px; color: var(--muted); font-variant-numeric: tabular-nums; }

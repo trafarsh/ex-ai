@@ -8,7 +8,7 @@
   window.SUITE_EXT_PATH = p;
   // tiktokEditor.jsx is the manifest's ScriptPath; these two are loaded next to it.
   // evalScript calls run in order, so they are ready before any tab calls them.
-  ['shotExporter.jsx', 'scenepacks.jsx'].forEach(function (f) {
+  ['shotExporter.jsx', 'scenepacks.jsx', 'packMaker.jsx'].forEach(function (f) {
     cep.evalScript('$.evalFile(' + JSON.stringify(p + '/jsx/' + f) + ')', function () {});
   });
 }());

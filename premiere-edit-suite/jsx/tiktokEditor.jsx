@@ -91,8 +91,15 @@ var TikTokEditor = (function () {
 
     function ticksToTimecode(ctx, ticks) {
         // QE razor() wants a timecode string; a tick count is silently ignored.
-        var fps = Math.round(TPS / ctx.f) || 30;
         var fr = Math.round(ticks / ctx.f);
+        if (ctx.seq) {
+            // Premiere's own formatting handles drop-frame (29.97/59.94) correctly.
+            try {
+                var tc = T(fr * ctx.f).getFormatted(T(ctx.f), ctx.seq.getSettings().videoDisplayFormat);
+                if (tc && /\d/.test(tc)) return tc;
+            } catch (e) { /* fall back to non-drop */ }
+        }
+        var fps = Math.round(TPS / ctx.f) || 30;
         function p(n) { return n < 10 ? '0' + n : String(n); }
         return p(Math.floor(fr / (fps * 3600))) + ':' + p(Math.floor((fr % (fps * 3600)) / (fps * 60))) + ':' +
                p(Math.floor((fr % (fps * 60)) / fps)) + ':' + p(fr % fps);

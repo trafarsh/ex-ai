@@ -94,6 +94,7 @@
     document.querySelectorAll('.tabs button').forEach(function (b) { b.classList.toggle('on', b.dataset.tab === name); });
     document.querySelectorAll('.tab').forEach(function (t) { t.classList.toggle('on', t.id === 'tab-' + name); });
     if (name === 'export' && window.ExportTab) window.ExportTab.activate();
+    if (name === 'make' && window.PackTab) window.PackTab.activate();
     try { localStorage.setItem('editSuite.tab', name); } catch (e) { /* ignore */ }
     refreshInfo();
   }

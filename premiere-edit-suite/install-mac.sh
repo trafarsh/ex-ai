@@ -10,6 +10,6 @@ done
 
 rm -rf "$DEST"
 mkdir -p "$DEST"
-cp -R "$SRC/CSXS" "$SRC/css" "$SRC/js" "$SRC/jsx" "$SRC/feeds" "$SRC/index.html" "$DEST/"
+cp -R "$SRC/CSXS" "$SRC/css" "$SRC/js" "$SRC/jsx" "$SRC/feeds" "$SRC/vendor" "$SRC/index.html" "$DEST/"
 echo "Installed to: $DEST"
 echo "Restart Premiere Pro, then open Window > Extensions > Edit Suite."

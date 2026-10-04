@@ -1,6 +1,6 @@
 # Edit Suite for Premiere Pro
 
-One Premiere Pro panel for TikTok-style edits: a 9:16 setup, beat markers from BPM, cutting on the beat, beat-synced effects, animated text, CC looks that update themselves, scenepack download and import, and Shot Exporter. It's built for Premiere Pro 2025/2026 and works back to 2022.
+One Premiere Pro panel for TikTok-style edits: a 9:16 setup, beat markers from BPM, cutting on the beat, beat-synced effects, animated text, CC looks that update themselves, scenepack download and import, a scenepack maker that sorts a movie's shots by character, and Shot Exporter. It's built for Premiere Pro 2025/2026 and works back to 2022.
 
 ## Install
 
@@ -21,9 +21,26 @@ The panel isn't signed, so the installer turns on Adobe's CEP debug mode, which 
 | **Text** | Uses Premiere's own title templates (or any `.mogrt`). Words or lines appear one per beat, or all of the text at once at the playhead. Animations: pop-in/bounce, 3D flip, shake, glitch, fade, slide up. You can also animate clips that are already selected. |
 | **Color** | One-click Lumetri looks, with intensity from 0 to 150%. Applying another look replaces the previous one on that clip. Select one adjustment layer to grade the whole edit. **CC flicker** flicks exposure, contrast and color on every beat. |
 | **Scenepacks** | Searches scenepacks.com and other sites (opens in your browser). **Auto-import** watches your Downloads folder: new `.mp4/.mov` files and `.zip` packs are unzipped and imported into the bin **Scenepacks › pack name**. **Download from a link** fetches direct, Google Drive and Dropbox links, then unzips and imports them. |
+| **Make pack** | Turns a movie or episode into a scenepack, sorted by character (see below). |
 | **Export** | Shot Exporter: renders every clip on V1 as its own video. |
 
 Everything the panel does to the timeline can be undone with Ctrl/Cmd+Z.
+
+## Make pack
+
+1. **Movie.** Import the movie, select it in the Project panel and click **Use movie selected in Project panel**. The panel makes a sequence called `Scenepack - <movie>`.
+2. **Find shots.** Premiere's own Scene Edit Detection cuts V1 at every camera change. A full movie takes a few minutes, and Premiere looks frozen until it's done. Skip this step if the timeline is already cut.
+3. **Find characters.** The panel exports 1–3 frames of every shot, finds the faces and groups them by person. It runs on your computer; nothing is uploaded. It's fastest on a graphics card. Without one, a 2-hour movie at one frame per shot takes about 20–30 minutes. **Stop** any time, and **Find characters** later continues where it stopped.
+4. **Characters.** Each card is one character, labelled by face, with its number of scenes.
+   - **Get cast** loads the cast list from Wikidata (type the title and add the year if needed), or paste one with one person per line, such as `Rick Dalton - Leonardo DiCaprio`.
+   - **Suggest names** fills the names by screen time: the character with the most scenes gets the first-billed role. The panel never recognizes actors from their faces, so check every name.
+   - **Grouping** sets how strict the face matching is. Tick cards and click **Merge** if one person was split into two cards, or **Hide** to drop extras.
+   - Click a face to see that character's scenes and click scenes to leave them out.
+5. **Export.** Tick the characters you want and click **Export selected scenes**. You get one folder per character (`Rick Dalton/Movie_Rick Dalton_0042.mp4` …), queued in Media Encoder or rendered in Premiere. **Name clips** renames the V1 clips after their characters.
+
+Progress, names, merges and choices are saved per sequence, so you can close Premiere and carry on later. Changing the cuts on V1 starts the face analysis over.
+
+Face detection uses [face-api](https://github.com/vladmandic/face-api) (MIT), with TensorFlow.js running on WebGL or WebAssembly. The models ship inside the panel (`vendor/face-api`).
 
 ### Speed ramps
 
@@ -61,6 +78,11 @@ index.html, css/, js/  the panel
 jsx/tiktokEditor.jsx   beats, effects, text, looks, 9:16 (ExtendScript)
 jsx/shotExporter.jsx   per-clip export
 jsx/scenepacks.jsx     imports downloaded clips into bins
+jsx/packMaker.jsx      Make pack: sequence, scene detection, frame export, clip names
+js/packlib.js          face grouping, cast lists (pure, tested)
+js/faces.js            face detection wrapper
+js/packmaker.js        Make pack tab
+vendor/face-api/       face-api + models + TensorFlow WebAssembly
 feeds/                 the online lists
-test/                  node test/tiktokEditor.test.js && node test/scenepacks.test.js
+test/                  node test/tiktokEditor.test.js && node test/scenepacks.test.js && node test/packMaker.test.js
 ```
