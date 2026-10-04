@@ -208,20 +208,28 @@
           });
         });
         return host('PackMaker', 'exportFrames', { dir: frameDir, items: items }).then(function (files) {
-          return files.map(function (f, n) { return { path: f.path, shot: items[n].shot, k: items[n].k }; });
+          return files.map(function (f, n) { return { path: f.path, error: f.error, shot: items[n].shot, k: items[n].k }; });
         });
       };
 
-      var total = pk.shots.length, started = Date.now(), doneNow = 0, missing = 0;
+      var total = pk.shots.length, started = Date.now(), doneNow = 0, missing = 0, firstError = '';
       var next = exportBatch(batches[0]);
       for (var b = 0; b < batches.length && !pk.stop; b++) {
         var files = await next;
         if (b + 1 < batches.length) next = exportBatch(batches[b + 1]); // Premiere exports while we analyse
+        var exported = {};
         for (var f = 0; f < files.length && !pk.stop; f++) {
-          if (!files[f].path) { missing++; continue; }
+          if (!files[f].path) { missing++; if (!firstError) firstError = files[f].error || ''; continue; }
+          exported[files[f].shot] = true;
           await analyseFrame(files[f].path, files[f].shot, files[f].k, faceDir, previewDir);
         }
-        batches[b].forEach(function (s) { pk.done[s.number] = true; });
+        // Premiere exported nothing at all: stop and say so instead of marking shots as done.
+        if (b === 0 && !Object.keys(exported).length) {
+          throw new Error('Premiere did not export any frames, so there is nothing to look for faces in' +
+            (firstError ? ' (' + firstError + ')' : '') + '. Click inside the Timeline panel once, then try “Find characters” again.');
+        }
+        // Shots whose frames failed stay un-done and are retried on the next run.
+        batches[b].forEach(function (s) { if (exported[s.number]) pk.done[s.number] = true; });
         doneNow += batches[b].length;
         var analysed = Object.keys(pk.done).length, per = (Date.now() - started) / doneNow;
         var left = Math.round(per * (total - analysed) / 60000);
@@ -232,8 +240,10 @@
         if (b % 5 === 4) { regroup(); saveCache(); }
       }
       regroup();
-      if (missing) log(missing + ' frame(s) could not be exported from Premiere and were skipped.', 'warn');
-      log(pk.stop ? 'Stopped. Click “Find characters” to continue where you left off.' : 'Found ' + pk.chars.length + ' characters in ' + total + ' shots.', 'ok');
+      if (missing) log(missing + ' frame(s) could not be exported from Premiere' + (firstError ? ' (' + firstError + ')' : '') + '. Run “Find characters” again to retry them.', 'warn');
+      if (pk.stop) log('Stopped. Click “Find characters” to continue where you left off.', 'ok');
+      else if (!pk.faces.length) log('Analysed ' + Object.keys(pk.done).length + ' shots but found no faces. Faces need to be roughly 1/25 of the frame height or bigger; try “3 frames per shot”.', 'warn');
+      else log('Found ' + pk.chars.length + ' characters (' + pk.faces.length + ' faces in ' + Object.keys(pk.done).length + ' shots). Next: “Suggest names”, then tick the box on each card you want.', 'ok');
     } finally {
       pk.running = false;
       busy(['pk-analyze', 'pk-shots', 'pk-fromProject', 'pk-fromSeq'], false);
@@ -340,12 +350,31 @@
       if (ch.hidden) card.style.opacity = 0.5;
       box.appendChild(card);
     });
-    if (!pk.chars.length && pk.faces.length) {
-      box.innerHTML = '<p class="muted small">No character appears in ' + pk.ui.min + '+ scenes yet. Lower “Min. scenes” or loosen “Grouping”.</p>';
+    if (!pk.chars.length) {
+      var analysed = Object.keys(pk.done).length;
+      box.innerHTML = '<p class="muted small empty">' + (
+        pk.faces.length ? 'No character appears in ' + pk.ui.min + '+ scenes yet. Lower “Min. scenes” or loosen “Grouping”.'
+        : analysed ? 'Analysed ' + analysed + ' shots and found no faces yet.'
+        : pk.shots.length ? 'No characters yet. Click <b>Find characters</b> in step 3; the cards appear here.'
+        : 'Pick the movie in step 1 first.') + '</p>';
     }
   }
 
   function picked() { return visibleChars().filter(function (ch) { return lookup(pk.ui.picked, ch); }); }
+
+  function needChars() {
+    if (!pk.chars.length) throw new Error(pk.shots.length ? 'There are no character cards yet. Run step 3, “Find characters”, first.' : 'Pick the movie in step 1, then run “Find characters”.');
+  }
+
+  function tickAll() {
+    needChars();
+    var list = visibleChars().filter(function (ch) { return !ch.hidden; });
+    var all = list.every(function (ch) { return lookup(pk.ui.picked, ch); });
+    list.forEach(function (ch) { if (all) { delete pk.ui.picked[ch.key]; ch.faces.forEach(function (f) { delete pk.ui.picked[f.id]; }); } else pk.ui.picked[ch.key] = true; });
+    $('pk-tickAll').textContent = all ? 'Tick all' : 'Untick all';
+    renderChars();
+    saveCache();
+  }
 
   function mergePicked() {
     var list = picked();
@@ -405,6 +434,7 @@
   }
 
   function suggest() {
+    needChars();
     if (!pk.cast.length) throw new Error('Get or paste the cast first.');
     var list = visibleChars().filter(function (ch) { return !ch.hidden; });
     var current = {};
@@ -461,7 +491,8 @@
 
   async function exportScenes() {
     var list = picked();
-    if (!list.length) throw new Error('Tick the characters to export.');
+    needChars();
+    if (!list.length) throw new Error('Tick the box in the top-left corner of each character card you want to export, or click “Tick all”.');
     var folder = $('pk-folder').value.trim(), preset = $('pk-preset').value;
     if (!folder) throw new Error('Choose an output folder.');
     if (!preset) throw new Error('Choose an export preset.');
@@ -565,6 +596,7 @@
     });
     action('pk-suggest', suggest);
     action('pk-merge', mergePicked);
+    action('pk-tickAll', tickAll);
     action('pk-hide', hidePicked);
     $('pk-showAll').addEventListener('click', function () { pk.showHidden = !pk.showHidden; $('pk-showAll').textContent = pk.showHidden ? 'Hide hidden' : 'Show hidden'; renderChars(); });
     $('pk-back').addEventListener('click', function () { $('pk-scenesBlock').hidden = true; renderChars(); });

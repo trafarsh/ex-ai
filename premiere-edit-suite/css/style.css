@@ -160,7 +160,8 @@ input[type=range] { width: 100%; accent-color: var(--accent); }
 .char input[type=text] { width: 100%; padding: 3px 4px; font-size: 11px; }
 .char .meta a { color: var(--accent); text-decoration: none; }
 .char .meta { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--muted); }
-.char .pick { position: absolute; top: 9px; left: 9px; z-index: 1; transform: scale(1.25); accent-color: var(--accent); }
+.char .pick { position: absolute; top: 9px; left: 9px; z-index: 1; width: 18px; height: 18px; margin: 0; accent-color: var(--accent); cursor: pointer; box-shadow: 0 0 0 2px rgba(0,0,0,.55); border-radius: 3px; }
+.chars .empty { grid-column: 1 / -1; padding: 10px 2px; }
 .char .sugg { color: var(--warn); font-size: 10px; }
 .scenes { display: grid; grid-template-columns: repeat(auto-fill, minmax(124px, 1fr)); gap: 6px; max-height: 420px; overflow: auto; }
 .scene { border: 2px solid transparent; border-radius: 4px; background: var(--field); cursor: pointer; overflow: hidden; }

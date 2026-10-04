@@ -124,9 +124,10 @@ var PackMaker = (function () {
             var base = dir.fsName + '/' + String(it.name).replace(/\./g, '_');
             var f = new File(base + '.jpg');
             if (f.exists) { out.push({ name: it.name, path: f.fsName }); continue; }
-            try { qeSeq.exportFrameJPEG(timecode(seq, it.ticks), base); } catch (e) { /* reported as missing */ }
+            var tc = timecode(seq, it.ticks), err = '';
+            try { qeSeq.exportFrameJPEG(tc, base); } catch (e) { err = String(e && e.message ? e.message : e); }
             f = new File(base + '.jpg');
-            out.push({ name: it.name, path: f.exists ? f.fsName : '' });
+            out.push({ name: it.name, path: f.exists ? f.fsName : '', error: f.exists ? '' : (err || 'Premiere wrote no file at ' + tc) });
         }
         return out;
     });
