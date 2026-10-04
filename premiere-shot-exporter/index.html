@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Shot Exporter</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <section class="block">
+    <div class="row">
+      <label for="track">Cuts from track</label>
+      <select id="track"><option value="0">V1</option></select>
+      <button id="scan" class="primary">Read timeline</button>
+    </div>
+    <p id="seqInfo" class="muted">Open your movie sequence, then click “Read timeline”.</p>
+  </section>
+
+  <section class="block grow">
+    <div class="row tight">
+      <strong id="shotCount">0 shots</strong>
+      <span class="spacer"></span>
+      <button id="selAll" class="link">All</button>
+      <button id="selNone" class="link">None</button>
+      <button id="selTimeline" class="link" title="Tick only the clips selected in the Timeline">Timeline selection</button>
+    </div>
+    <div class="tableWrap">
+      <table id="shots">
+        <thead><tr><th></th><th>#</th><th>In</th><th>Out</th><th>Frames</th><th>Clip</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="block">
+    <label for="folder">Output folder</label>
+    <div class="row">
+      <input id="folder" type="text" placeholder="Choose a folder…">
+      <button id="pickFolder">Browse</button>
+    </div>
+
+    <label for="preset">Export preset</label>
+    <div class="row">
+      <select id="preset"><option value="">Loading presets…</option></select>
+      <button id="pickPreset" title="Use any .epr file, e.g. one saved from the Export dialog">Browse</button>
+    </div>
+
+    <label for="pattern">File name</label>
+    <input id="pattern" type="text" value="{seq}_shot_{n}">
+    <p class="muted small">Tokens: {n} shot number, {seq} sequence, {clip} clip name, {in} start timecode. Preview: <span id="preview"></span></p>
+
+    <div class="row">
+      <label class="inline"><input type="radio" name="mode" value="ame" checked> Queue in Media Encoder</label>
+      <label class="inline"><input type="radio" name="mode" value="direct"> Render in Premiere</label>
+    </div>
+    <div class="row">
+      <label class="inline"><input id="startBatch" type="checkbox" checked> Start AME queue right away</label>
+      <label class="inline"><input id="overwrite" type="checkbox"> Overwrite existing files</label>
+    </div>
+    <details>
+      <summary>Advanced</summary>
+      <div class="row">
+        <label for="outAdjust" class="inline">Out-point adjust (frames)</label>
+        <input id="outAdjust" type="number" value="0" step="1" class="narrow">
+      </div>
+      <p class="muted small">Leave at 0. Use −1 only if your test render includes the first frame of the next shot.</p>
+      <label class="inline"><input id="skipDisabled" type="checkbox" checked> Skip disabled clips</label>
+    </details>
+
+    <button id="export" class="primary wide" disabled>Export shots</button>
+    <progress id="progress" value="0" max="1"></progress>
+  </section>
+
+  <section class="block">
+    <pre id="log"></pre>
+  </section>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
